@@ -12,6 +12,9 @@ import { sanitizeUser } from "../utils/sanitizeUser";
 import { sendResetPasswordMail, sendVerificationMail } from "../utils/sendMail";
 import { validateEmail, validateLogin, validateRegister, validateResetPassword } from "../validations/auth.validation";
 import { generateCookieOptions } from "../configs/cookies";
+import jwt from "jsonwebtoken"
+import { decodedUser } from "../types";
+import { transformSessions } from "../utils/transformSessions";
 
 
 export const register = asyncHandler(async (req, res) => {
@@ -381,3 +384,131 @@ export const resetPassword = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, "Password reset successfully", null));
 });
 
+export const refreshAccessToken = asyncHandler(async (req, res) => {
+  const incomingRefreshToken = req.cookies?.refreshToken;
+
+  if (!incomingRefreshToken) {
+    throw new CustomError(401, "Refresh token is missing");
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(incomingRefreshToken, env.REFRESH_TOKEN_SECRET);
+  } catch (error: any) {
+    throw new CustomError(401, "Invalid or expired refresh token");
+  }
+
+  const hashedIncomingRefreshToken = createHash(incomingRefreshToken);
+
+  const validToken = await prisma.session.findUnique({
+    where: { refreshToken: hashedIncomingRefreshToken },
+  });
+
+  if (!validToken) {
+    throw new CustomError(401, "Refresh token has been used or is invalid");
+  }
+
+  const incomingUserAgent = req.headers["user-agent"];
+  const incomingIp = req.ip;
+
+  if (validToken.userAgent !== incomingUserAgent || validToken.ipAddress !== incomingIp) {
+    await prisma.session.delete({ where: { id: validToken.id } });
+    throw new CustomError(401, "Session mismatch. Please log in again.");
+  }
+
+  const accessToken = generateAccessToken(decoded as decodedUser);
+  const refreshToken = generateRefreshToken(decoded as decodedUser);
+
+  const hashedRefreshToken = createHash(refreshToken);
+
+  await prisma.session.update({
+    where: { id: validToken.id },
+    data: {
+      refreshToken: hashedRefreshToken,
+    },
+  });
+
+  logger.info("Access token refreshed");
+
+  res
+    .status(200)
+    .cookie("accessToken", accessToken, generateCookieOptions())
+    .cookie(
+      "refreshToken",
+      refreshToken,
+      generateCookieOptions({ rememberMe: validToken.rememberMe }),
+    )
+    .json(new ApiResponse(200, "Access token refreshed successfully", null));
+});
+
+export const logoutAllSessions = asyncHandler(async (req, res) => {
+  const { id } = req.user;
+  const { refreshToken } = req.cookies;
+
+  const hashedRefreshToken = createHash(refreshToken);
+
+  await prisma.session.deleteMany({
+    where: {
+      userId: id,
+      NOT: {
+        refreshToken: hashedRefreshToken,
+      },
+    },
+  });
+
+  logger.info("Logged out from all other sessions");
+
+  res.status(200).json(new ApiResponse(200, "Logged out from all other sessions", null));
+});
+
+export const getActiveSessions = asyncHandler(async (req, res) => {
+  const { id: userId } = req.user;
+  const currentRefreshToken = req.cookies.refreshToken as string;
+
+  const hashedRefreshToken = createHash(currentRefreshToken);
+
+  const sessions = await prisma.session.findMany({
+    where: { userId },
+    select: {
+      id: true,
+      ipAddress: true,
+      userAgent: true,
+      updatedAt: true,
+      expiresAt: true,
+      refreshToken: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  // Setting true flag to current session
+  const setCurrentFlag = sessions.map((session) => ({
+    ...session,
+    current: session.refreshToken === hashedRefreshToken,
+  }));
+
+  const removeRefreshToken = setCurrentFlag.map(({ refreshToken, ...rest }) => rest);
+  const formattedSessions = await transformSessions(removeRefreshToken);
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, "Fetched all active sessions successfully", formattedSessions));
+});
+
+export const logoutSpecificSession = asyncHandler(async (req, res) => {
+  const { id } = req.user;
+  const { sessionId } = req.params;
+
+  const session = await prisma.session.findUnique({
+    where: { id: sessionId },
+  });
+
+  if (!session || session.userId !== id) {
+    throw new CustomError(401, "Invalid session ID");
+  }
+
+  await prisma.session.delete({ where: { id: sessionId } });
+
+  logger.info("User logged out of specific session");
+
+  res.status(200).json(new ApiResponse(200, "Logged out of specific session successfully", null));
+});

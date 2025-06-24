@@ -60,7 +60,7 @@ const envSchema = z.object({
   MAX_SESSIONS: validNumber("MAX_SESSIONS"),
 
   GOOGLE_CLIENT_ID: nonEmptyString("GOOGLE_CLIENT_ID"),
-//   IPINFO_TOKEN: nonEmptyString("IPINFO_TOKEN"),
+  IPINFO_TOKEN: nonEmptyString("IPINFO_TOKEN"),
 });
 
 const createEnv = (env: NodeJS.ProcessEnv) => {
