@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { authRateLimiter, forgotPasswordRateLimiter, resendVerificationRateLimiter } from "../middlewares/rateLimit.middleware";
 import { upload } from "../middlewares/multer.middleware";
-import { forgotPassword, register, resendVerificationEmail, resetPassword, verifyEmail } from "../controllers/auth.controller";
+import { forgotPassword, getActiveSessions, logout, logoutAllSessions, logoutSpecificSession, refreshAccessToken, register, resendVerificationEmail, resetPassword, verifyEmail } from "../controllers/auth.controller";
+import { isLoggedIn } from "../middlewares/auth.middleware";
 
 
 const router = Router();
@@ -17,5 +18,12 @@ router.get("/verify/:token", verifyEmail);
 router.post("/email/resend", resendVerificationRateLimiter, resendVerificationEmail);
 router.post("/password/forgot", forgotPasswordRateLimiter, forgotPassword);
 router.post("/password/reset/:token", resetPassword);
+
+router.get("/refresh-token", refreshAccessToken);
+
+router.post("/logout", isLoggedIn, logout);
+router.post("/logout/all", isLoggedIn, logoutAllSessions);
+router.get("/sessions", isLoggedIn, getActiveSessions);
+router.post("/sessions/:sessionId", isLoggedIn, logoutSpecificSession);
 
 export default router 
