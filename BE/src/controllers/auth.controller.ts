@@ -605,3 +605,17 @@ export const googleLogin = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Google login successful", null));
 });
 
+export const getProfile = asyncHandler(async (req, res) => {
+  const { id } = req.user;
+  const user = await prisma.user.findUnique({ where: { id } });
+
+  if (!user) {
+    throw new CustomError(404, "User not found");
+  }
+
+  const safeUser = sanitizeUser(user);
+
+  logger.info("User profile fetched", { email: user.email, userId: user.id, ip: req.ip });
+
+  res.status(200).json(new ApiResponse(200, "User profile fetched successfully", safeUser));
+});
