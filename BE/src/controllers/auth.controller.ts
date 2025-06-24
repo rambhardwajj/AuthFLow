@@ -15,6 +15,7 @@ import { generateCookieOptions } from "../configs/cookies";
 import jwt from "jsonwebtoken"
 import { decodedUser } from "../types";
 import { transformSessions } from "../utils/transformSessions";
+import { verifyGoogleToken } from "../utils/verifyGoogleToken";
 
 
 export const register = asyncHandler(async (req, res) => {
@@ -512,3 +513,95 @@ export const logoutSpecificSession = asyncHandler(async (req, res) => {
 
   res.status(200).json(new ApiResponse(200, "Logged out of specific session successfully", null));
 });
+
+export const googleLogin = asyncHandler(async (req, res) => {
+  const { token, rememberMe } = req.body;
+  const payload = await verifyGoogleToken(token);
+
+  const { email, name, picture } = payload;
+
+  if (!email || !name || !picture) {
+    throw new CustomError(200, "");
+  }
+
+  const existingUser = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  let user = existingUser;
+
+  // Creating new user
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        email,
+        fullname: name,
+        isVerified: true,
+        avatar: picture,
+        provider: "google",
+      },
+    });
+  }
+
+  // Creating a session for existing user
+  const userAgent = req.headers["user-agent"];
+  const ipAddress = req.ip;
+
+  const existingSession = await prisma.session.findFirst({
+    where: {
+      userId: user.id,
+      userAgent,
+      ipAddress,
+    },
+  });
+
+  const existingSessionsCount = await prisma.session.count({
+    where: { userId: user.id },
+  });
+
+  // Enforce session limit only if new session is being created
+  if (!existingSession && existingSessionsCount >= env.MAX_SESSIONS) {
+    throw new CustomError(
+      429,
+      "Maximum session limit reached. Please logout from another device first.",
+    );
+  }
+
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
+
+  const hashedRefreshToken = createHash(refreshToken);
+
+  const expiresAt = new Date(Date.now() + ms(env.REFRESH_TOKEN_EXPIRY as StringValue));
+
+  if (existingSession) {
+    // Update refreshToken + expiry for existing session
+    await prisma.session.update({
+      where: { id: existingSession.id },
+      data: {
+        refreshToken: hashedRefreshToken,
+        expiresAt,
+      },
+    });
+  } else {
+    // Create new session
+    await prisma.session.create({
+      data: {
+        userId: user.id,
+        userAgent,
+        ipAddress,
+        refreshToken: hashedRefreshToken,
+        expiresAt,
+      },
+    });
+  }
+
+  logger.info(`${email} logged in via Google`);
+
+  res
+    .status(200)
+    .cookie("accessToken", accessToken, generateCookieOptions())
+    .cookie("refreshToken", refreshToken, generateCookieOptions({ rememberMe }))
+    .json(new ApiResponse(200, "Google login successful", null));
+});
+
