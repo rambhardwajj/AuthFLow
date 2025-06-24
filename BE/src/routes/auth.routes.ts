@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authRateLimiter, forgotPasswordRateLimiter, resendVerificationRateLimiter } from "../middlewares/rateLimit.middleware";
 import { upload } from "../middlewares/multer.middleware";
-import { forgotPassword, getActiveSessions, googleLogin, logout, logoutAllSessions, logoutSpecificSession, refreshAccessToken, register, resendVerificationEmail, resetPassword, verifyEmail } from "../controllers/auth.controller";
+import { forgotPassword, getActiveSessions, getProfile, googleLogin, logout, logoutAllSessions, logoutSpecificSession, refreshAccessToken, register, resendVerificationEmail, resetPassword, verifyEmail } from "../controllers/auth.controller";
 import { isLoggedIn } from "../middlewares/auth.middleware";
 
 
@@ -28,5 +28,6 @@ router.post("/sessions/:sessionId", isLoggedIn, logoutSpecificSession);
 
 router.post("/login/google", googleLogin);
 
+router.get("/profile", isLoggedIn, getProfile);
 
 export default router 
