@@ -34,9 +34,9 @@ app.use(
 );
 
 import healthRoutes from "./routes/health.routes";
+import authRoutes from "./routes/auth.routes"
 
 
 app.use("/api/v1/healthcheck", healthRoutes);
-
-
+app.use("/api/v1/auth", authRoutes);
 export default app

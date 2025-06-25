@@ -47,13 +47,8 @@ const changePasswordSchema = z
 const resetPasswordSchema = z
   .object({
     password: strongPassword,
-    confirmPassword: z.string(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Confirm password must match the new password",
-    path: ["confirmPassword"],
-  });
-
+ 
 type RegisterData = z.infer<typeof registerSchema>;
 type LoginData = z.infer<typeof loginSchema>;
 type EmailData = z.infer<typeof emailSchema>;
