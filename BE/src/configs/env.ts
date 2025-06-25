@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { number, z } from "zod";
 import dotenv from "dotenv";
 import { logger } from "./logger";
 import { NodeEnv } from "../utils/constants";
@@ -40,6 +40,11 @@ const envSchema = z.object({
   REFRESH_TOKEN_SECRET: nonEmptyString("REFRESH_TOKEN_SECRET"),
   REFRESH_TOKEN_EXPIRY: nonEmptyString("REFRESH_TOKEN_EXPIRY"),
   REFRESH_TOKEN_EXPIRY_REMEMBER_ME: nonEmptyString("REFRESH_TOKEN_EXPIRY_REMEMBER_ME"),
+
+  MAILTRAP_HOST: z.string().nonempty(),
+  MAILTRAP_PORT: z.coerce.number(),
+  MAILTRAP_USERNAME: z.string().nonempty(),
+  MAILTRAP_PASSWORD: z.string().nonempty(),
 
   MAILTRAP_TOKEN: nonEmptyString("MAILTRAP_TOKEN"),
   MAILTRAP_SENDERMAIL: z.string().email("MAILTRAP_SENDERMAIL must be a valid email"),
