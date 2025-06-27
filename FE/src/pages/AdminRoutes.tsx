@@ -1,9 +1,14 @@
-import React from 'react'
+import { useAppSelector } from "@/hooks";
+import { Navigate, Outlet } from "react-router-dom";
 
 const AdminRoutes = () => {
-  return (
-    <div>AdminRoutes</div>
-  )
-}
+  const { isLoggedIn, user } = useAppSelector((state) => state.auth);
 
-export default AdminRoutes
+  return isLoggedIn && user?.role === "admin" ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/dashboard" replace />
+  );
+};
+
+export default AdminRoutes;

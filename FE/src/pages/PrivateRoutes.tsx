@@ -1,9 +1,10 @@
-import React from 'react'
+import { Navigate, Outlet } from "react-router-dom";
+import { useAppSelector } from "@/hooks";
 
 const PrivateRoutes = () => {
-  return (
-    <div>PrivateRoutes</div>
-  )
-}
+  const { isLoggedIn } = useAppSelector((state) => state.auth);
 
-export default PrivateRoutes
+  return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
+};
+
+export default PrivateRoutes;
