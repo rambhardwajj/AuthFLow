@@ -4,7 +4,7 @@ import {
   type BaseQueryFn,
   type FetchArgs,
   type FetchBaseQueryError,
-} from "@reduxjs/toolkit/query";
+} from "@reduxjs/toolkit/query/react";
 import { BASE_URL, AUTH_PATH, ADMIN_PATH } from "../../constants";
 import type {
   AllUsers,
@@ -14,8 +14,9 @@ import type {
   ResendVerificationFormData,
   ResetPasswordFormData,
   User,
+  Session
 } from "@/types";
-import type { Session } from "react-router-dom";
+
 
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
@@ -157,3 +158,23 @@ export const apiSlice = createApi({
     }),
   }),
 });
+
+
+export const {
+  useRegisterMutation,
+  useVerifyEmailQuery,
+  useLoginMutation,
+  useFetchUserQuery,
+  useLazyFetchUserQuery,
+  useResendVerificationMutation,
+  useDeleteSessionMutation,
+  useForgotPasswordMutation,
+  useFetchUserSessionsQuery,
+  useLogoutAllMutation,
+  useLogoutMutation,
+  useLogoutSpecificSessionMutation,
+  useResetPasswordMutation,
+  useLogoutUserSessionMutation,
+  useFetchAllUsersQuery,
+  useLazyFetchUserSessionQuery,
+} = apiSlice;
