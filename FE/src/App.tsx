@@ -1,33 +1,47 @@
-// import { BASE_URL } from "./constants";
+import { Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import Register from "./pages/Register";
+import NotFound from "./pages/NotFound";
+import { ToastContainer } from "react-toastify";
+import Login from "./pages/Login";
+import ResendVerificationEmail from "./pages/ResendVerification";
+import EmailVerification from "./pages/EmailVerification";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminRoutes from "./pages/AdminRoutes";
+import PrivateRoutes from "./pages/PrivateRoutes";
+// import { useUser } from "./hooks";
 
-function App() {
+const App = () => {
+  // useUser();
   return (
-    <>
-      <div className="bg-red-500">
-        {/* <button
-          onClick={async () => {
-            try {
-              console.log("here")
-              const res = await fetch(`${BASE_URL}/api/v1/healthcheck`, {
-                method: "GET",
-              });
+    <div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/verify-email/:token" element={<EmailVerification />} />
+        <Route
+          path="/resend-verification"
+          element={<ResendVerificationEmail />}
+        />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-              if (!res.ok) {
-                throw new Error("Health check failed");
-              }
+        <Route element={<PrivateRoutes />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+        <Route element={<AdminRoutes />}>
+          <Route path="/admin" element={<AdminDashboard />} />
+        </Route>
 
-              const data = await res.json();
-              console.log("Health Check Response:", data);
-            } catch (error) {
-              console.log("Error:", error)
-            }
-          }}
-        >
-          click here
-        </button> */}
-      </div>
-    </>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <ToastContainer position="top-right" autoClose={2000} />
+    </div>
   );
-}
+};
 
 export default App;
