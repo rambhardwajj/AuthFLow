@@ -13,6 +13,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminRoutes from "./pages/AdminRoutes";
 import PrivateRoutes from "./pages/PrivateRoutes";
 import { useUser } from "./hooks";
+import DevDocs from "./pages/DevDocs";
 
 const App = () => {
   useUser();
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/resend-verification" element={<ResendVerificationEmail />}/>
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/devdocs" element={<DevDocs />} />
 
         <Route element={<PrivateRoutes />}>
           <Route path="/dashboard" element={<Dashboard />} />

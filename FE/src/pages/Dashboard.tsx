@@ -81,22 +81,25 @@ const Dashboard = () => {
     <div>
       <div className="min-h-screen bg-zinc-900 p-6">
         <div className="max-w-6xl mx-auto space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="mb-15 flex justify-around items-center">
             <div>
               <h1 className="text-3xl font-bold text-red-50 ">Dashboard</h1>
               <p className="text-zinc-400">Manage your account and sessions</p>
             </div>
-            <div className="flex gap-6 text-zinc-900">
-              {userProfile?.role === "admin" && (
-                <Button
-                  variant="outline"
-                  className="cursor-pointer"
-                  onClick={() => navigate("/admin")}
-                >
-                  <UserCog className="h-4 w-4 mr-2" />
-                  Admin Dashboard
-                </Button>
-              )}
+          </div>
+
+          <div className="flex justify-between gap-6 text-zinc-900">
+            {userProfile?.role === "admin" && (
+              <Button
+                variant="outline"
+                className="cursor-pointer"
+                onClick={() => navigate("/admin")}
+              >
+                <UserCog className="h-4 w-4 mr-2" />
+                Admin Dashboard
+              </Button>
+            )}
+            <div className="flex gap-3">
               <Button
                 className="cursor-pointer text-zinc-100 bg-red-900"
                 variant={"outline"}
@@ -111,7 +114,7 @@ const Dashboard = () => {
                 ) : (
                   <>
                     <LogOut className="mr-2 h-4 w-4" />
-                    Logout
+                    Logout Current Session
                   </>
                 )}
               </Button>

@@ -8,7 +8,7 @@ import nodemailer from "nodemailer"
 const mailGenerator = new Mailgen({
   theme: "default",
   product: {
-    name: "Secure Auth",
+    name: "AuthFlow",
     link: env.CLIENT_URL,
   },
 });
@@ -91,7 +91,7 @@ const emailVerificationMailContent = (fullName: string, link: string) => {
   return {
     body: {
       name: fullName,
-      intro: "Welcome to Secure Auth! We're excited to have you on board.",
+      intro: "Welcome to AuthFlow! We're excited to have you on board.",
       action: {
         instructions:
           "To complete your registration, please verify your email by clicking the button below:",
