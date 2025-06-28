@@ -12,10 +12,10 @@ import ResetPassword from "./pages/ResetPassword";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminRoutes from "./pages/AdminRoutes";
 import PrivateRoutes from "./pages/PrivateRoutes";
-// import { useUser } from "./hooks";
+import { useUser } from "./hooks";
 
 const App = () => {
-  // useUser();
+  useUser();
   return (
     <div>
       <Routes>
@@ -23,10 +23,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/verify-email/:token" element={<EmailVerification />} />
-        <Route
-          path="/resend-verification"
-          element={<ResendVerificationEmail />}
-        />
+        <Route path="/resend-verification" element={<ResendVerificationEmail />}/>
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
