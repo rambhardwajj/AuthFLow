@@ -1,13 +1,13 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 import {
-  // useGoogleLoginMutation,
+  useGoogleLoginMutation,
   useLazyFetchUserQuery,
   useLoginMutation,
 } from "@/redux/services/apiSlice";
 
 import { toast } from "react-toastify";
 import { useState } from "react";
-// import { GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin } from "@react-oauth/google";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,17 +33,16 @@ const Login = () => {
   } = useForm<LoginFormData>();
 
   const [login, { isLoading }] = useLoginMutation();
-  // const [googleLogin] = useGoogleLoginMutation();
+  const [googleLogin] = useGoogleLoginMutation();
   const [getProfile] = useLazyFetchUserQuery();
 
-  
   //local states
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  
+
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  
+
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     try {
       const response = await login(data).unwrap();
@@ -74,7 +73,7 @@ const Login = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* <div className="flex items-center justify-center w-full">
+          <div className="flex items-center justify-center w-full">
             <GoogleLogin
               theme="outline"
               text="continue_with"
@@ -102,7 +101,7 @@ const Login = () => {
               }}
               onError={() => toast.error("Login Failed.")}
             />
-          </div> */}
+          </div>
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">

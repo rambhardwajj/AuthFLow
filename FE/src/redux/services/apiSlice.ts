@@ -101,6 +101,18 @@ export const apiSlice = createApi({
       }),
     }),
 
+    googleLogin: builder.mutation<
+      ApiResponse<null>,
+      { token: string; rememberMe?: boolean }
+    >({
+      query: (data) => ({
+        url: `${AUTH_PATH}/login/google`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
     logout: builder.mutation<ApiResponse<null>, void>({
       query: () => ({
         url: `${AUTH_PATH}/logout`,
@@ -167,6 +179,7 @@ export const {
   useFetchUserQuery,
   useLazyFetchUserQuery,
   useResendVerificationMutation,
+  useGoogleLoginMutation,
   useDeleteSessionMutation,
   useForgotPasswordMutation,
   useFetchUserSessionsQuery,

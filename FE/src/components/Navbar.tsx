@@ -37,7 +37,7 @@ const Navbar = () => {
                 AuthFlow
               </span>
             </div>
-            <div className="ml-10  text-sm">
+            <div className="ml-10 hidden md:block text-sm">
               <Link
                 to={"/"}
                 className="text-neutral-400 cursor-pointer hover:text-neutral-50 px-2"

@@ -6,6 +6,9 @@
 
 ![alt text](image-1.png)
 
+# Google Authentication Workflow
+
+![alt text](image-2.png)
 
 Some Important Questions: 
 

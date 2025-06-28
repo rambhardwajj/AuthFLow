@@ -15,6 +15,11 @@ const DevDocs = () => {
           alt=""
           className="p-10 my-10 border rounded-md border-red-500"
         />
+        <img
+          src="googleLogin.png"
+          alt=""
+          className="p-10 my-10 border rounded-md border-red-500"
+        />
       </div>
     </div>
   );

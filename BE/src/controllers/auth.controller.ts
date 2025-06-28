@@ -526,7 +526,7 @@ export const googleLogin = asyncHandler(async (req, res) => {
 
   const existingUser = await prisma.user.findUnique({
     where: { email },
-  });
+  }); 
 
   let user = existingUser;
 
