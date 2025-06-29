@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "build": "prisma generate && tsc -b",
+    "build": "prisma generate  && tsc -b",
     "dev": "tsx watch src/index.ts",
-    "start": "pnpm run build && node dist/index.js",
+    "start": "pnpm build &&  mv ./src/generated ./dist/  &&  node dist/index.js",
     "format": "prettier . --write"
   },
   "keywords": [],
