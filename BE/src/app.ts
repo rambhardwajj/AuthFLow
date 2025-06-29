@@ -5,18 +5,15 @@ import cors from "cors";
 import { env } from "./configs/env";
 import { CustomError } from "./utils/CustomError";
 
-
-
 const app = express()
 app.use(helmet())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-
 app.use(cookieParser());
 
-const allowedOrigins = [env.CLIENT_URL, "http://localhost:5173"];
+
+const allowedOrigins = [env.CLIENT_URL];
 
 app.use(
   cors({
