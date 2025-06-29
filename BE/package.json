@@ -7,7 +7,7 @@
   "scripts": {
     "build": "prisma generate &&  tsc -b",
     "dev": "tsx watch src/index.ts",
-    "start": "pnpm build &&  node dist/index.js",
+    "start": "node dist/index.js",
     "format": "prettier . --write"
   },
   "keywords": [],
