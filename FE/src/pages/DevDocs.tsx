@@ -35,6 +35,7 @@ const DevDocs = () => {
           alt="Google login screenshot"
           className="w-full max-w-5xl rounded-2xl border border-red-500 shadow-lg p-6 transition hover:scale-105 hover:shadow-red-700"
         />
+        
       </div>
     </div>
   );

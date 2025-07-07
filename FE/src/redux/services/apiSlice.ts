@@ -51,7 +51,7 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     register: builder.mutation<ApiResponse<User>, FormData>({
       query: (formData) => ({
-        url: `${ADMIN_PATH}/register`,
+        url: `${AUTH_PATH}/register`,
         method: "POST",
         body: formData,
       }),
