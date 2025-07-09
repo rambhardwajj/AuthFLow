@@ -1,5 +1,7 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 import {
+  useGoogleLoginMutation,
+  useLazyFetchUserQuery,
   // useGoogleLoginMutation,
   // useLazyFetchUserQuery,
   useRegisterMutation,
@@ -8,7 +10,7 @@ import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import type { RegisterFormData } from "@/types";
-// import { GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin } from "@react-oauth/google";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,18 +23,18 @@ import {
 } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Lock, Mail, User, UserPlus } from "lucide-react";
-// import { setCredentials } from "@/redux/features/authSlice";
-// import { useAppDispatch } from "@/hooks";
+import { setCredentials } from "@/redux/features/authSlice";
+import { useAppDispatch } from "@/hooks";
 
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormData>();
 
   const navigate = useNavigate();
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const [registerUser, { isLoading }] = useRegisterMutation();
-  // const [googleLogin] = useGoogleLoginMutation();
-  // const [getProfile] = useLazyFetchUserQuery();
+  const [googleLogin] = useGoogleLoginMutation();
+  const [getProfile] = useLazyFetchUserQuery();
 
   const [showPassword, setShowPassword] = useState(false);
   
@@ -76,7 +78,7 @@ const Register = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-center w-full">
-            {/* <GoogleLogin
+           <GoogleLogin
               theme="outline"
               text="continue_with"
               onSuccess={async (credentialResponse) => {
@@ -101,7 +103,7 @@ const Register = () => {
                 }
               }}
               onError={() => toast.error("Login Failed.")}
-            /> */}
+            /> 
           </div>
 
           <div className="relative">
